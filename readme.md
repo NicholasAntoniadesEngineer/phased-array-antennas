@@ -1,5 +1,7 @@
 # Phased Array Antennas (2024)
 
+As a senior engineer in the automotive industry, I contributed to the development of the central security system for the Fisker Ocean and Pear electric vehicles, leveraging Ultra-Wide Band (UWB), Bluetooth (BLE), and NFC technologies. My work encompassed hardware and software development, systems integration, and testing at the Magna Steyr vehicle manufacturing plant in Austria.
+
 I have extensive experience developing phased array antenna technologies for advanced applications in military, automotive, and aerospace sectors. My work spans algorithm design, hardware integration, and system-level testing to deliver high-performance and reliable solutions.
 
 At Hanwha Phasor, I played a key role in the development of phased array antennas for LEO and GEO satellites. This involved designing software architecture, developing production firmware, and creating hardware drivers for critical components such as antenna ICs, shift registers, SDRAM, and Ethernet switches. I also implemented and tested phased array control algorithms, ensuring optimal system performance and reliability.
