@@ -1,8 +1,6 @@
 # Phased Array Antennas (2024)
 
-As a senior embedded software engineer at Hanwha Phasor, I played a key role in the development of an advanced phased array antenna control system working with LEO and GEO satellites. 
-
-These systems were tailored for high-speed, on-the-move applications, enhancing communication reliability in dynamic environments. 
+As a senior embedded software engineer at Hanwha Phasor, I played a key role in the development of an advanced phased array antenna control system working with LEO and GEO satellites. These systems were tailored for high-speed, on-the-move applications, enhancing communication reliability in dynamic environments. 
 
 This involved designing software architecture, developing production firmware, and creating hardware drivers for critical components such as antenna ICs, shift registers, SDRAM, and Ethernet switches. I also implemented and tested phased array control algorithms, ensuring optimal system performance and reliability.
 
