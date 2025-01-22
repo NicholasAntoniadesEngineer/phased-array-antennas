@@ -26,18 +26,27 @@ The VectorNav VN-310 is a high-performance Inertial Navigation System (INS) that
 - UART/Serial communication driver
 - Platform timing functions
 
-## Usage Example
-```c
-// Initialize VN-310
-vn310_config_t config = {
-    .uart_handle = &huart2,
-    .baud_rate = 921600,
-    .async_output_rate = 100  // 100 Hz
-};
-vn310_state_t state;
-vn310_init(&state, &config);
+## Application Layer
+The application layer (`vn310_app`) provides a higher-level interface for interacting with the VN-310 device. It includes:
 
-// Read IMU data
-vn310_imu_data_t imu_data;
-vn310_read_imu_measurements(&state, &imu_data);
-```
+### Key Features
+- Message parsing for both ASCII NMEA-style messages and binary protocol
+- Pose data handling (yaw, pitch, roll, latitude, longitude)
+- CLI interface for device configuration and control
+- Power management and GPIO control for dual antenna setup
+- Configurable output rates (1, 2, 4, 5, 10, 20, 25, 40, 50, 100, 200 Hz)
+
+### CLI Commands
+The application provides command-line interface commands for:
+- Setting output frequency
+- Power control
+- Device configuration
+- Register reading/writing
+- Message streaming control
+- INS status monitoring
+
+The application layer automatically handles:
+- Message parsing and pose updates
+- INS status monitoring
+- Data streaming management
+- Command response handling
