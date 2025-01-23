@@ -30,7 +30,7 @@ Driver and application interface for the VectorNav VN310 GPS-Aided IMU. Provides
 ```bash
 # Device Control
 vn310 power <on|off>              # Control device power
-vn310 output <enable|disable>      # Control data output
+vn310 output <enable|disable>     # Control data output
 vn310 output freq <1-200>         # Set output frequency in Hz
 
 # Data Access
