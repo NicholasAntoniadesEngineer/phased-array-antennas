@@ -1,52 +1,39 @@
-# VectorNav IMU/GPS Driver
-
-This folder contains the driver implementation for the VectorNav VN-310 Dual Antenna GNSS/INS device.
+# VectorNav VN310 GPS/IMU Driver
 
 ## Overview
+Driver and application interface for the VectorNav VN310 GPS-Aided IMU. Provides functionality for sensor configuration, data acquisition, and pose estimation.
 
-The VectorNav VN-310 is a high-performance Inertial Navigation System (INS) that combines dual GNSS receivers with an industrial-grade IMU. This driver provides a hardware abstraction layer for configuring and reading data from the device.
+## Features
+- Full VN310 sensor configuration and control
+- Binary and ASCII message parsing
+- Real-time pose estimation (position, orientation, angular rates)
+- Command-line interface for sensor interaction
+- Configurable output data rates (1-200 Hz)
+- Support for dual antenna GPS configurations
 
-### Features
-- UART communication interface with binary protocol support
-- Configurable output data rates up to 800Hz
-- IMU Measurements:
-  - Angular rates (°/s)
-  - Linear acceleration (m/s²)
-  - Magnetic field (Gauss)
-- GPS Data:
-  - Position (LLA)
-  - Velocity (NED)
-  - Dual antenna heading
-- Navigation Solutions:
-  - Attitude (heading, pitch, roll)
-  - Heading accuracy
-  - Navigation status
+## Project Structure
+### Source Files (`src/`)
+- `vn310_applet.c` - Main application controller managing device state, message handling, and pose updates
+- `vn310_cli.c` - Command-line interface implementation for device control and configuration
+- `vn310_driver.c` - Low-level driver handling UART communication, register access, and device protocols
+- `vn310_parser.c` - Message parser for both binary and ASCII NMEA-style messages from the device
+- `vn310_pose.c` - Pose estimation and coordinate transformation utilities
 
-## Dependencies
-- UART/Serial communication driver
-- Platform timing functions
+### Header Files (`inc/`)
+- `vn310_applet.h` - Application state structures and initialization interfaces
+- `vn310_cli.h` - CLI command definitions and handler interfaces
+- `vn310_driver.h` - Driver configuration and communication interfaces
+- `vn310_parser.h` - Message parsing structures and utilities
+- `vn310_pose.h` - Pose data structures and transformation interfaces
 
-## Application Layer
-The application layer (`vn310_app`) provides a higher-level interface for interacting with the VN-310 device. It includes:
+## Basic Usage
+```bash
+# Device Control
+vn310 power <on|off>              # Control device power
+vn310 output <enable|disable>      # Control data output
+vn310 output freq <1-200>         # Set output frequency in Hz
 
-### Key Features
-- Message parsing for both ASCII NMEA-style messages and binary protocol
-- Pose data handling (yaw, pitch, roll, latitude, longitude)
-- CLI interface for device configuration and control
-- Power management and GPIO control for dual antenna setup
-- Configurable output rates (1, 2, 4, 5, 10, 20, 25, 40, 50, 100, 200 Hz)
-
-### CLI Commands
-The application provides command-line interface commands for:
-- Setting output frequency
-- Power control
-- Device configuration
-- Register reading/writing
-- Message streaming control
-- INS status monitoring
-
-The application layer automatically handles:
-- Message parsing and pose updates
-- INS status monitoring
-- Data streaming management
-- Command response handling
+# Data Access
+vn310 cli stream <start|stop>     # Control raw data streaming
+vn310 read <parameter>            # Read device parameters
+```
