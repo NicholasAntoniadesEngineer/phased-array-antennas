@@ -17,7 +17,7 @@
 //"$VNINS,125176.941097,2332,8206,+082.014,+000.014,+001.063,+51.51992529,-000.11006359,+00089.216,-000.001,-000.008,-000.125,03.9,01.2,0.10*65"
 enum {toknum_insstatus = 3, toknum_yaw, toknum_pitch, toknum_roll, toknum_poslat, toknum_poslon, toknum_posalt};
 
-STATUS parse_VNINS(const char *s, struct pose_t *p)
+STATUS vn310_parser_parse_VNINS(const char *s, struct vn310_pose_t *p)
 {
     char *t = strtok((char *)s, ",");
     int i = 0;
@@ -26,7 +26,7 @@ STATUS parse_VNINS(const char *s, struct pose_t *p)
         switch (i)
         {
             case toknum_insstatus:
-                insStatus = (uint16_t)strtoul(t, NULL, 16);
+                p->ins_status = (uint16_t)strtoul(t, NULL, 16);
                 break;
             case toknum_yaw:
                 p->yaw = strtod(t, NULL);
@@ -66,11 +66,11 @@ STATUS parse_VNINS(const char *s, struct pose_t *p)
     return ERROR;
 }
 
-STATUS handle_pose_message(const char *s, struct pose_t *p)
+STATUS vn310_parser_handle_pose_message(const char *s, struct vn310_pose_t *p)
 {
     if (0 == strncmp(s, "$VNINS", 6))
     {
-        return parse_VNINS(s, p);
+        return vn310_parser_parse_VNINS(s, p);
     }
     //todo call parsers for other formats here eg binary
 

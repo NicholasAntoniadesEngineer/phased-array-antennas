@@ -336,12 +336,13 @@ static STATUS vn310_override(struct cli_state_t *cli_state, void *context, int a
         double pitch = strtod(argv[4], NULL);
         double roll = strtod(argv[5], NULL);
 
-        pose.yaw = yaw;
-        pose.pitch = pitch;
-        pose.roll = roll;
+        state->pose_data.yaw = yaw;
+        state->pose_data.pitch = pitch;
+        state->pose_data.roll = roll;
 
-        cli_printf(cli_state, "Yaw: %0.3f Pitch: %0.3f Roll: %0.3f\n",  pose.yaw, pose.pitch, pose.roll);
-        send_updated_pose(state, &pose, true);
+        cli_printf(cli_state, "Yaw: %0.3f Pitch: %0.3f Roll: %0.3f\n", 
+                  state->pose_data.yaw, state->pose_data.pitch, state->pose_data.roll);
+        vn310_pose_send_updated(state, &state->pose_data, true);
     }
     else if (strcmp(argv[2], "loc") == 0)
     {
@@ -351,11 +352,12 @@ static STATUS vn310_override(struct cli_state_t *cli_state, void *context, int a
         double lat = strtod(argv[3], NULL);
         double lng = strtod(argv[4], NULL);
 
-        pose.latitude = lat;
-        pose.longitude = lng;
+        state->pose_data.latitude = lat;
+        state->pose_data.longitude = lng;
 
-        cli_printf(cli_state, "Lat: %0.3f Lng: %0.3f\n",  pose.latitude, pose.longitude);
-        send_updated_pose(state, &pose, true);
+        cli_printf(cli_state, "Lat: %0.3f Lng: %0.3f\n", 
+                  state->pose_data.latitude, state->pose_data.longitude);
+        vn310_pose_send_updated(state, &state->pose_data, true);
     }
     else
     {

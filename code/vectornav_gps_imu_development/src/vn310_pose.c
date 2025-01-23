@@ -13,10 +13,7 @@
 #include "message_routing.h"
 #include "message_pose.h"
 
-struct pose_t pose;
-uint16_t insStatus;
-
-float wrap_0_to_360_degrees(float input)
+float vn310_pose_wrap_0_to_360_degrees(float input)
 {
     input = fmod(input, 360.0);
     if (input < 0)
@@ -26,21 +23,21 @@ float wrap_0_to_360_degrees(float input)
     return input;
 }
 
-float radians_to_degrees(float input)
+float vn310_pose_radians_to_degrees(float input)
 {
     return input * (360.0f / (2.0f * M_PI));
 }
 
-void send_updated_pose(struct app_vn310_state_t *state, struct pose_t *p, bool forced)
+void vn310_pose_send_updated(struct app_vn310_state_t *state, struct vn310_pose_t *p, bool forced)
 {
     if (state->driver_state.send_pose || forced)
     {
         struct message_pose_t message;
         message_pose_init(&message);
-        struct pose_t wp = *p;
-        wp.roll = wrap_0_to_360_degrees(p->roll);
-        wp.pitch = wrap_0_to_360_degrees(p->pitch);
-        wp.yaw = wrap_0_to_360_degrees(p->yaw);
+        struct vn310_pose_t wp = *p;
+        wp.roll = vn310_pose_wrap_0_to_360_degrees(p->roll);
+        wp.pitch = vn310_pose_wrap_0_to_360_degrees(p->pitch);
+        wp.yaw = vn310_pose_wrap_0_to_360_degrees(p->yaw);
         // TODO: Add this in properly. This is intended to be distance from sea level, but this
         // may be defined differently by the vertornav?
         wp.altitude = 0;

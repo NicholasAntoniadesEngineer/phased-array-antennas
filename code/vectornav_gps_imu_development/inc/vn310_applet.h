@@ -11,11 +11,16 @@
 
 #pragma once
 
-#include "vn310_applet.h"
 #include "vn310_cli.h"
 #include "vn310_pose.h"
 #include "vn310_parser.h"
 #include "driver_gpio.h"
+
+struct vn310_applet_state_t {
+    struct vn310_applet_config_t config;
+    struct driver_vn310_state_t driver_state;
+    struct vn310_pose_t pose_data;  // Added pose data to state
+};
 
 /**
  * @brief Initialize the vn310 app.
