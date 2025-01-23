@@ -13,5 +13,5 @@
 
 #include "vn310_pose.h"
 
-STATUS vn310_parser_parse_VNINS(const char *s, struct vn310_pose_t *p);
-STATUS vn310_parser_handle_pose_message(const char *s, struct vn310_pose_t *p); 
+STATUS vn310_parser_parse_VNINS(const char *recieved_string, struct vn310_pose_t *vn310_pose);
+STATUS vn310_parser_handle_pose_message(const char *recieved_string, struct vn310_pose_t *vn310_pose); 

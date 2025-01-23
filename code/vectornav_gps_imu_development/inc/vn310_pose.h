@@ -27,4 +27,4 @@ struct vn310_pose_t {
 
 float vn310_pose_wrap_0_to_360_degrees(float input);
 float vn310_pose_radians_to_degrees(float input);
-void vn310_pose_send_updated(struct app_vn310_state_t *state, struct vn310_pose_t *p, bool forced); 
+void vn310_pose_send_updated(struct app_vn310_state_t *state, struct vn310_pose_t *vn310_pose, bool forced); 
