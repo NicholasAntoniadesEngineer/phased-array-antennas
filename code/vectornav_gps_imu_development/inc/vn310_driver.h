@@ -1,5 +1,5 @@
 /**
- * @file driver_vectornav.h
+ * @file vn310_driver.h
  * @brief Header file for the VectorNav driver.
  * 
  * This file contains the definitions and function prototypes for the VectorNav driver.
@@ -133,15 +133,15 @@ enum vectornav_register_id
 
 };
 
-struct driver_vectornav_config_t
+struct vn310_driver_config_t
 {
     struct driver_uart_config_t vectornav_uart_config;
 
 };
 
-struct driver_vectornav_state_t
+struct vn310_driver_state_t
 {
-    struct driver_vectornav_config_t config;
+    struct vn310_driver_config_t config;
     char assembled_message[UART_DMA_READ_BUF_SIZE];
     struct driver_uart_state_t uart_state;
     bool uart_stream;
@@ -150,30 +150,30 @@ struct driver_vectornav_state_t
 
 };
 
-STATUS driver_vectornav_configure(struct driver_vectornav_state_t *state);
-STATUS driver_vectornav_eventcallback(struct driver_vectornav_state_t *vectornav_driver_state, uint16_t message_size);
-STATUS driver_vectornav_init(struct driver_vectornav_state_t *state, const struct driver_vectornav_config_t *config);
-enum vectornav_msg_type driver_vectornav_message_check(char *received_data, char *assembled_data, uint16_t recieved_message_size, uint16_t uart_dma_buffer_size);
-STATUS driver_vectornav_print_stream(struct driver_vectornav_state_t *state, struct cli_state_t *cli_state);
-STATUS driver_vectornav_read_byte(struct driver_vectornav_state_t *state, uint8_t *pData);
-STATUS driver_vectornav_send_byte(struct driver_vectornav_state_t *state, uint8_t *data, size_t data_size);
-STATUS driver_vectornav_write_register(struct driver_vectornav_state_t *state, enum vectornav_register_id register_id, const uint8_t *data, size_t data_size);
-STATUS driver_vectornav_read_register(struct driver_vectornav_state_t *state, enum vectornav_register_id register_id);
-STATUS driver_vectornav_write_settings(struct driver_vectornav_state_t *state);
-STATUS driver_vectornav_factory_settings(struct driver_vectornav_state_t *state);
-STATUS driver_vectornav_reset_device(struct driver_vectornav_state_t *state);
-STATUS driver_vectornav_disable_output(struct driver_vectornav_state_t *state);
-STATUS driver_vectornav_output_pause(struct driver_vectornav_state_t *state);
-STATUS driver_vectornav_output_enable_port_1(struct driver_vectornav_state_t *state);
-STATUS driver_vectornav_set_antenna_a(struct driver_vectornav_state_t *state, double x_cordinate, double y_cordinate, double z_cordinate);
-STATUS driver_vectornav_set_antenna_b(struct driver_vectornav_state_t *state, double x_cordinate, double y_cordinate, double z_cordinate);
-STATUS driver_vectornav_set_configuration_0(struct driver_vectornav_state_t *state);
-STATUS driver_vectornav_set_asynchronous_output(struct driver_vectornav_state_t *state, char const *setting);
-STATUS driver_vectornav_set_output_data_freq(struct driver_vectornav_state_t *state, uint8_t data_freq);
-STATUS driver_vectornav_set_vectoranv_baud_rate(struct driver_vectornav_state_t *state, unsigned int baud_rate);
-STATUS driver_vectornav_set_uart_baud_rate(struct driver_vectornav_state_t *state, unsigned int baud_rate);
-STATUS driver_vectornav_binary_output_poll(struct driver_vectornav_state_t *state, uint8_t register_num);
-STATUS driver_vectornav_read_model_number(struct driver_vectornav_state_t *state);
-STATUS driver_vectornav_read_hardware_revision(struct driver_vectornav_state_t *state);
-STATUS driver_vectornav_read_serial_number(struct driver_vectornav_state_t *state);
-STATUS driver_vectornav_read_firmware_version(struct driver_vectornav_state_t *state); 
+STATUS vn310_driver_configure(struct vn310_driver_state_t *state);
+STATUS vn310_driver_eventcallback(struct vn310_driver_state_t *vectornav_driver_state, uint16_t message_size);
+STATUS vn310_driver_init(struct vn310_driver_state_t *state, const struct vn310_driver_config_t *config);
+enum vectornav_msg_type vn310_driver_message_check(char *received_data, char *assembled_data, uint16_t recieved_message_size, uint16_t uart_dma_buffer_size);
+STATUS vn310_driver_print_stream(struct vn310_driver_state_t *state, struct cli_state_t *cli_state);
+STATUS vn310_driver_read_byte(struct vn310_driver_state_t *state, uint8_t *pData);
+STATUS vn310_driver_send_byte(struct vn310_driver_state_t *state, uint8_t *data, size_t data_size);
+STATUS vn310_driver_write_register(struct vn310_driver_state_t *state, enum vectornav_register_id register_id, const uint8_t *data, size_t data_size);
+STATUS vn310_driver_read_register(struct vn310_driver_state_t *state, enum vectornav_register_id register_id);
+STATUS vn310_driver_write_settings(struct vn310_driver_state_t *state);
+STATUS vn310_driver_factory_settings(struct vn310_driver_state_t *state);
+STATUS vn310_driver_reset_device(struct vn310_driver_state_t *state);
+STATUS vn310_driver_disable_output(struct vn310_driver_state_t *state);
+STATUS vn310_driver_output_pause(struct vn310_driver_state_t *state);
+STATUS vn310_driver_output_enable_port_1(struct vn310_driver_state_t *state);
+STATUS vn310_driver_set_antenna_a(struct vn310_driver_state_t *state, double x_cordinate, double y_cordinate, double z_cordinate);
+STATUS vn310_driver_set_antenna_b(struct vn310_driver_state_t *state, double x_cordinate, double y_cordinate, double z_cordinate);
+STATUS vn310_driver_set_configuration_0(struct vn310_driver_state_t *state);
+STATUS vn310_driver_set_asynchronous_output(struct vn310_driver_state_t *state, char const *setting);
+STATUS vn310_driver_set_output_data_freq(struct vn310_driver_state_t *state, uint8_t data_freq);
+STATUS vn310_driver_set_vectoranv_baud_rate(struct vn310_driver_state_t *state, unsigned int baud_rate);
+STATUS vn310_driver_set_uart_baud_rate(struct vn310_driver_state_t *state, unsigned int baud_rate);
+STATUS vn310_driver_binary_output_poll(struct vn310_driver_state_t *state, uint8_t register_num);
+STATUS vn310_driver_read_model_number(struct vn310_driver_state_t *state);
+STATUS vn310_driver_read_hardware_revision(struct vn310_driver_state_t *state);
+STATUS vn310_driver_read_serial_number(struct vn310_driver_state_t *state);
+STATUS vn310_driver_read_firmware_version(struct vn310_driver_state_t *state); 

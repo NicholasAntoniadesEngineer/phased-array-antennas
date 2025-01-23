@@ -1,5 +1,5 @@
 /**
- * @file driver_vectornav.c
+ * @file vn310_driver.c
  * @brief Implementation of the VectorNav driver functions.
  * 
  * This file contains the functions necessary to initialize, configure, and communicate with the VectorNav sensor.
@@ -14,9 +14,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "console_commands.h"
-#include "vn310.h"
-#include "driver_uart.h"
+#include "vn310_driver.h"
     
 /**
  * @brief Initialize the VectorNav driver.
@@ -25,7 +23,7 @@
  * @param config The configuration for the VectorNav driver.
  * @return STATUS The status of the initialization.
  */
-STATUS driver_vectornav_init(struct driver_vectornav_state_t *state, const struct driver_vectornav_config_t *config)
+STATUS vn310_driver_init(struct vn310_driver_state_t *state, const struct vn310_driver_config_t *config)
 {
     state->config = *config;
 
@@ -40,7 +38,7 @@ STATUS driver_vectornav_init(struct driver_vectornav_state_t *state, const struc
  * @param state The state of the VectorNav driver.
  * @return STATUS The status of the configuration.
  */
-STATUS driver_vectornav_configure(struct driver_vectornav_state_t *state)
+STATUS vn310_driver_configure(struct vn310_driver_state_t *state)
 {
     state->vectornav_message_ready = false;
     state->message_counter = 0;
@@ -58,11 +56,11 @@ STATUS driver_vectornav_configure(struct driver_vectornav_state_t *state)
  * @param uart_assembled_message The assembled message from the UART.
  * @param message_size The size of the received message.
  */
-STATUS driver_vectornav_eventcallback(struct driver_vectornav_state_t *vectornav_driver_state, uint16_t message_size)
+STATUS vn310_driver_eventcallback(struct vn310_driver_state_t *vectornav_driver_state, uint16_t message_size)
 {
 	char *uart_received_data = (char*) vectornav_driver_state->uart_state.config.rx_buf;
 
-	enum vectornav_msg_type recieved_msg_type = driver_vectornav_message_check(uart_received_data, vectornav_driver_state->assembled_message, message_size,UART_DMA_READ_BUF_SIZE);
+	enum vectornav_msg_type recieved_msg_type = vn310_driver_message_check(uart_received_data, vectornav_driver_state->assembled_message, message_size,UART_DMA_READ_BUF_SIZE);
 
 	//check message type
 	if (MSG_ASYNC == recieved_msg_type || MSG_BINARY == recieved_msg_type)
@@ -84,7 +82,7 @@ STATUS driver_vectornav_eventcallback(struct driver_vectornav_state_t *vectornav
  * @param cli_state The state of the CLI.
  * @return STATUS The status of the print operation.
  */
-STATUS driver_vectornav_print_stream(struct driver_vectornav_state_t *state, struct cli_state_t *cli_state)
+STATUS vn310_driver_print_stream(struct vn310_driver_state_t *state, struct cli_state_t *cli_state)
 {
 	if(true == state->uart_stream )
 	{
@@ -106,7 +104,7 @@ STATUS driver_vectornav_print_stream(struct driver_vectornav_state_t *state, str
  * @param uart_dma_buffer_size The size of the UART DMA buffer.
  * @return STATUS The status of the message assembly.
  */
-enum vectornav_msg_type driver_vectornav_message_check(char *received_data, char *assembled_data, uint16_t recieved_message_size, uint16_t uart_dma_buffer_size)
+enum vectornav_msg_type vn310_driver_message_check(char *received_data, char *assembled_data, uint16_t recieved_message_size, uint16_t uart_dma_buffer_size)
 {
 	// todo: there should be a crc check 
 
@@ -152,7 +150,7 @@ enum vectornav_msg_type driver_vectornav_message_check(char *received_data, char
  * @param data_size The size of the data.
  * @return STATUS The status of the send operation.
  */
-STATUS driver_vectornav_send_byte(struct driver_vectornav_state_t *state, uint8_t *data, size_t data_size)
+STATUS vn310_driver_send_byte(struct vn310_driver_state_t *state, uint8_t *data, size_t data_size)
 {
     return driver_uart_transmit(&state->uart_state, data, data_size);
 }
@@ -164,7 +162,7 @@ STATUS driver_vectornav_send_byte(struct driver_vectornav_state_t *state, uint8_
  * @param data The data to be read.
  * @return STATUS The status of the read operation.
  */
-STATUS driver_vectornav_read_byte(struct driver_vectornav_state_t *state, uint8_t *data)
+STATUS vn310_driver_read_byte(struct vn310_driver_state_t *state, uint8_t *data)
 {
 	driver_uart_read_byte(&state->uart_state, data);
 
@@ -189,12 +187,12 @@ STATUS driver_vectornav_read_byte(struct driver_vectornav_state_t *state, uint8_
 * It is highly recommended that this type of scaling be performed for any baseline longer than the default of 1.0m.
 *
 */
-STATUS driver_vectornav_set_antenna_a(struct driver_vectornav_state_t *state, double x_cordinate, double y_cordinate, double z_cordinate)
+STATUS vn310_driver_set_antenna_a(struct vn310_driver_state_t *state, double x_cordinate, double y_cordinate, double z_cordinate)
 {
 	//	$VNWRG,57,x_cordinate,y_cordinate,z_cordinate*XX????
 	return OK;
 }
-STATUS driver_vectornav_set_antenna_b(struct driver_vectornav_state_t *state, double x_cordinate, double y_cordinate, double z_cordinate)
+STATUS vn310_driver_set_antenna_b(struct vn310_driver_state_t *state, double x_cordinate, double y_cordinate, double z_cordinate)
 {
 	//	$VNWRG,57,x_cordinate,y_cordinate,z_cordinate*XX????
 
@@ -207,14 +205,14 @@ STATUS driver_vectornav_set_antenna_b(struct driver_vectornav_state_t *state, do
  * @param state The state of the UART driver.
  * @return STATUS The status of the command operation.
  */
-STATUS driver_vectornav_factory_settings(struct driver_vectornav_state_t *state)
+STATUS vn310_driver_factory_settings(struct vn310_driver_state_t *state)
 {
     char command[32];
     snprintf(command, sizeof(command), "%s%s*%s%s",VECTORNAV_HEADER ,VECTORNAV_RESET_FS_CMD, VECTORNAV_NO_CRC, VECTORNAV_CRLF);
 
     size_t command_size = strlen(command);
 
-    return driver_vectornav_send_byte(state, (uint8_t*)command, command_size);
+    return vn310_driver_send_byte(state, (uint8_t*)command, command_size);
 }
 
 /**
@@ -223,14 +221,14 @@ STATUS driver_vectornav_factory_settings(struct driver_vectornav_state_t *state)
  * @param state The state of the UART driver.
  * @return STATUS The status of the command operation.
  */
-STATUS driver_vectornav_reset_device(struct driver_vectornav_state_t *state)
+STATUS vn310_driver_reset_device(struct vn310_driver_state_t *state)
 {
     char command[32];
     snprintf(command, sizeof(command), "%s%s*%s%s",VECTORNAV_HEADER ,VECTORNAV_RESET_CMD, VECTORNAV_NO_CRC, VECTORNAV_CRLF);
 
     size_t command_size = strlen(command);
 
-    return driver_vectornav_send_byte(state, (uint8_t*)command, command_size);
+    return vn310_driver_send_byte(state, (uint8_t*)command, command_size);
 }
 
 /**
@@ -245,7 +243,7 @@ STATUS driver_vectornav_reset_device(struct driver_vectornav_state_t *state)
  * @retval STATUS_SUCCESS If the command is sent successfully and acknowledged.
  * @retval STATUS_ERROR If an error occurs during command transmission or if the command is not acknowledged.
  */
-STATUS driver_vectornav_set_output_data_freq(struct driver_vectornav_state_t *state, uint8_t data_freq)
+STATUS vn310_driver_set_output_data_freq(struct vn310_driver_state_t *state, uint8_t data_freq)
 {
     char command[32];
     snprintf(command, sizeof(command), "%s%s,%d,%d*%s%s",
@@ -258,7 +256,7 @@ STATUS driver_vectornav_set_output_data_freq(struct driver_vectornav_state_t *st
 
     size_t command_size = strlen(command);
 
-    return driver_vectornav_send_byte(state, (uint8_t*)command, command_size);
+    return vn310_driver_send_byte(state, (uint8_t*)command, command_size);
 }
 
 /**
@@ -272,7 +270,7 @@ STATUS driver_vectornav_set_output_data_freq(struct driver_vectornav_state_t *st
  * @retval STATUS_SUCCESS If the command is sent successfully and acknowledged.
  * @retval STATUS_ERROR If an error occurs during command transmission or if the command is not acknowledged.
  */
-STATUS driver_vectornav_set_vectoranv_baud_rate(struct driver_vectornav_state_t *state, unsigned int baud_rate)
+STATUS vn310_driver_set_vectoranv_baud_rate(struct vn310_driver_state_t *state, unsigned int baud_rate)
 {
     char command[32];
     snprintf(command, sizeof(command), "%s%s,%d,%u*%s%s",
@@ -285,7 +283,7 @@ STATUS driver_vectornav_set_vectoranv_baud_rate(struct driver_vectornav_state_t 
 
     size_t command_size = strlen(command);
 
-    return driver_vectornav_send_byte(state, (uint8_t*)command, command_size);
+    return vn310_driver_send_byte(state, (uint8_t*)command, command_size);
 }
 
 /**
@@ -299,7 +297,7 @@ STATUS driver_vectornav_set_vectoranv_baud_rate(struct driver_vectornav_state_t 
  * @retval STATUS_SUCCESS If the command is sent successfully and acknowledged.
  * @retval STATUS_ERROR If an error occurs during command transmission or if the command is not acknowledged.
  */
-STATUS driver_vectornav_set_uart_baud_rate(struct driver_vectornav_state_t *state, unsigned int baud_rate)
+STATUS vn310_driver_set_uart_baud_rate(struct vn310_driver_state_t *state, unsigned int baud_rate)
 {
 	return driver_uart_set_baud_rate(&state->uart_state, baud_rate, (uint8_t *)state->assembled_message, UART_DMA_READ_BUF_SIZE);
 }
@@ -321,7 +319,7 @@ STATUS driver_vectornav_set_uart_baud_rate(struct driver_vectornav_state_t *stat
  * @param state Pointer to the VectorNav driver state structure.
  * @return STATUS indicating the success or failure of the configuration operation.
  */
-STATUS driver_vectornav_set_configuration_0(struct driver_vectornav_state_t *state) 
+STATUS vn310_driver_set_configuration_0(struct vn310_driver_state_t *state) 
 {
     int output_group 	 	 = 0x0012;	// Group selection: 0b00000010010 0x0016: Time Group, IMU Group, Attitude Group
     int group_field_1 		 = 0x0003;	// Time Group:	    0b00000000001 0x0001: TimeGpsPps
@@ -342,7 +340,7 @@ STATUS driver_vectornav_set_configuration_0(struct driver_vectornav_state_t *sta
 
     size_t command_size = strlen(command);
 
-    return driver_vectornav_send_byte(state, (uint8_t*)command, command_size);
+    return vn310_driver_send_byte(state, (uint8_t*)command, command_size);
 }
 
 
@@ -355,7 +353,7 @@ STATUS driver_vectornav_set_configuration_0(struct driver_vectornav_state_t *sta
  * @param setting Pointer to the setting value. 
  * @return STATUS indicating the success or failure of the operation.
  */
-STATUS driver_vectornav_set_asynchronous_output(struct driver_vectornav_state_t *state, char const *setting)
+STATUS vn310_driver_set_asynchronous_output(struct vn310_driver_state_t *state, char const *setting)
 {
     char command[64]; 
     snprintf(command, sizeof(command), "%s%s,%d,%s*%s%s",
@@ -368,7 +366,7 @@ STATUS driver_vectornav_set_asynchronous_output(struct driver_vectornav_state_t 
  
     size_t command_size = strlen(command);
 
-    return driver_vectornav_send_byte(state, (uint8_t*)command, command_size);
+    return vn310_driver_send_byte(state, (uint8_t*)command, command_size);
 }
 
 /**
@@ -430,14 +428,14 @@ unsigned short calculate_16_bit_crc(unsigned char data[], unsigned int length)
  * @param register_id The ID of the register to be read.
  * @return Status of the operation (success or failure).
  */
-STATUS driver_vectornav_read_register(struct driver_vectornav_state_t *state, enum vectornav_register_id register_id) 
+STATUS vn310_driver_read_register(struct vn310_driver_state_t *state, enum vectornav_register_id register_id) 
 {
     char command[32];
     snprintf(command, sizeof(command), "%s%s,%d*%s%s",VECTORNAV_HEADER,VECTORNAV_RRG_CMD, register_id, VECTORNAV_NO_CRC, VECTORNAV_CRLF);
 
     size_t command_size = strlen(command);
 
-    STATUS status = driver_vectornav_send_byte(state, (uint8_t*)command, command_size);
+    STATUS status = vn310_driver_send_byte(state, (uint8_t*)command, command_size);
 
     return status;
 }
@@ -453,14 +451,14 @@ STATUS driver_vectornav_read_register(struct driver_vectornav_state_t *state, en
  * @param data_size Size of the data to be written.
  * @return Status of the operation (success or failure).
  */
-STATUS driver_vectornav_write_register(struct driver_vectornav_state_t *state, enum vectornav_register_id register_id, const uint8_t *data, size_t data_size) 
+STATUS vn310_driver_write_register(struct vn310_driver_state_t *state, enum vectornav_register_id register_id, const uint8_t *data, size_t data_size) 
 {
     char command[32 + 2 * data_size];
 
     snprintf(command, sizeof(command), "%s%s,%d,%d*%s%s",VECTORNAV_HEADER, VECTORNAV_WRG_CMD, register_id, data[0], VECTORNAV_NO_CRC, VECTORNAV_CRLF);
     size_t command_size = strlen(command);
 
-    STATUS status = driver_vectornav_send_byte(state, (uint8_t*)command, command_size);
+    STATUS status = vn310_driver_send_byte(state, (uint8_t*)command, command_size);
 
     return status;
 }
@@ -473,14 +471,14 @@ STATUS driver_vectornav_write_register(struct driver_vectornav_state_t *state, e
  * @param state Pointer to the VectorNav driver state structure.
  * @return Status of the operation (success or failure).
  */
-STATUS driver_vectornav_write_settings(struct driver_vectornav_state_t *state) {
+STATUS vn310_driver_write_settings(struct vn310_driver_state_t *state) {
 
     char command[32];
     snprintf(command, sizeof(command), "%s%s*%s%s",VECTORNAV_HEADER,VECTORNAV_WRITE_SETTINGS_CMD, VECTORNAV_NO_CRC, VECTORNAV_CRLF);
 
     size_t command_size = strlen(command);
 
-    STATUS status = driver_vectornav_send_byte(state, (uint8_t*)command, command_size);
+    STATUS status = vn310_driver_send_byte(state, (uint8_t*)command, command_size);
     
     return status;
 }
@@ -493,7 +491,7 @@ STATUS driver_vectornav_write_settings(struct driver_vectornav_state_t *state) {
  * @param state Pointer to the VectorNav driver state structure.
  * @return Status of the operation (success or failure).
  */
-STATUS driver_vectornav_output_pause(struct driver_vectornav_state_t *state) 
+STATUS vn310_driver_output_pause(struct vn310_driver_state_t *state) 
 {
     char command[32];
     snprintf(command, sizeof(command), "%s%s,%d*%s%s",
@@ -505,7 +503,7 @@ STATUS driver_vectornav_output_pause(struct driver_vectornav_state_t *state)
 
     size_t command_size = strlen(command);
 
-    STATUS status = driver_vectornav_send_byte(state, (uint8_t*)command, command_size);
+    STATUS status = vn310_driver_send_byte(state, (uint8_t*)command, command_size);
     return status;
 }
 
@@ -517,14 +515,14 @@ STATUS driver_vectornav_output_pause(struct driver_vectornav_state_t *state)
  * @param state Pointer to the VectorNav driver state structure.
  * @return Status of the operation (success or failure).
  */
-STATUS driver_vectornav_output_enable_port_1(struct driver_vectornav_state_t *state)
+STATUS vn310_driver_output_enable_port_1(struct vn310_driver_state_t *state)
 {
     char command[32];
     snprintf(command, sizeof(command), "%s%s,%d*%s%s",VECTORNAV_HEADER, VECTORNAV_ASYNC_CMD, ASYNC_MODE_PORT_1, VECTORNAV_NO_CRC, VECTORNAV_CRLF);
 
     size_t command_size = strlen(command);
 
-    STATUS status = driver_vectornav_send_byte(state, (uint8_t*)command, command_size);
+    STATUS status = vn310_driver_send_byte(state, (uint8_t*)command, command_size);
     return status;
 }
 
@@ -537,14 +535,14 @@ STATUS driver_vectornav_output_enable_port_1(struct driver_vectornav_state_t *st
  * @param register_num The number of the binary output register (1-3) to select the appropriate binary output register.
  * @return Status of the operation (success or failure).
  */
-STATUS driver_vectornav_binary_output_poll(struct driver_vectornav_state_t *state, uint8_t register_num) 
+STATUS vn310_driver_binary_output_poll(struct vn310_driver_state_t *state, uint8_t register_num) 
 {
     char command[32];
     snprintf(command, sizeof(command), "%s%s,%d*%s%s",VECTORNAV_HEADER ,VECTORNAV_BOM_CMD , register_num, VECTORNAV_NO_CRC, VECTORNAV_CRLF);
 
     size_t command_size = strlen(command);
 
-    STATUS status = driver_vectornav_send_byte(state, (uint8_t*)command, command_size);
+    STATUS status = vn310_driver_send_byte(state, (uint8_t*)command, command_size);
 
     return status;
 }
@@ -557,9 +555,9 @@ STATUS driver_vectornav_binary_output_poll(struct driver_vectornav_state_t *stat
  * @param state Pointer to the VectorNav driver state structure.
  * @return Status of the operation (success or failure).
  */
-STATUS driver_vectornav_read_model_number(struct driver_vectornav_state_t *state) 
+STATUS vn310_driver_read_model_number(struct vn310_driver_state_t *state) 
 {
-    return driver_vectornav_read_register(state, MODEL_NUMBER_REGISTER);
+    return vn310_driver_read_register(state, MODEL_NUMBER_REGISTER);
 }
 
 /**
@@ -570,9 +568,9 @@ STATUS driver_vectornav_read_model_number(struct driver_vectornav_state_t *state
  * @param state Pointer to the VectorNav driver state structure.
  * @return Status of the operation (success or failure).
  */
-STATUS driver_vectornav_read_hardware_revision(struct driver_vectornav_state_t *state) 
+STATUS vn310_driver_read_hardware_revision(struct vn310_driver_state_t *state) 
 {
-    return driver_vectornav_read_register(state, HARDWARE_REVISION_REGISTER);
+    return vn310_driver_read_register(state, HARDWARE_REVISION_REGISTER);
 }
 
 /**
@@ -583,9 +581,9 @@ STATUS driver_vectornav_read_hardware_revision(struct driver_vectornav_state_t *
  * @param state Pointer to the VectorNav driver state structure.
  * @return Status of the operation (success or failure).
  */
-STATUS driver_vectornav_read_serial_number(struct driver_vectornav_state_t *state) 
+STATUS vn310_driver_read_serial_number(struct vn310_driver_state_t *state) 
 {
-    return driver_vectornav_read_register(state, SERIAL_NUMBER_REGISTER);
+    return vn310_driver_read_register(state, SERIAL_NUMBER_REGISTER);
 }
 
 /**
@@ -596,7 +594,7 @@ STATUS driver_vectornav_read_serial_number(struct driver_vectornav_state_t *stat
  * @param state Pointer to the VectorNav driver state structure.
  * @return Status of the operation (success or failure).
  */
-STATUS driver_vectornav_read_firmware_version(struct driver_vectornav_state_t *state) 
+STATUS vn310_driver_read_firmware_version(struct vn310_driver_state_t *state) 
 {
-    return driver_vectornav_read_register(state, FIRMWARE_VERSION_REGISTER);
+    return vn310_driver_read_register(state, FIRMWARE_VERSION_REGISTER);
 }

@@ -8,7 +8,7 @@ STM32CubeProgrammer CLI. Provides a clean interface for common operations:
 - Sector and full chip erasure
 - Device reset functionality
 
-Author: Your Name
+Author: Nicholas Antoniades
 """
 
 import subprocess

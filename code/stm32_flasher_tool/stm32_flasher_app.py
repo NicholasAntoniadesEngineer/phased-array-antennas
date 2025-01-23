@@ -7,6 +7,8 @@ Features:
 - Support for Debug/Release builds
 - Real-time file monitoring
 - Simple one-click flashing
+
+Author: Nicholas Antoniades
 """
 
 import os
